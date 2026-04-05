@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "512143908386",
+    "project_id": "noteappadmin-995c9",
+    "storage_bucket": "noteappadmin-995c9.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:512143908386:android:aab59a4cb156e345f7f47b",
+        "android_client_info": {
+          "package_name": "com.tien.noteapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB81KYtxN07XTtrvCOKM_pK5KSVXeAKAVE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
