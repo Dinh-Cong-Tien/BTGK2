@@ -40,11 +40,12 @@ fun NoteAppNavigation() {
 
     val isAuthenticated by authViewModel.isAuthenticated.collectAsState()
     
-    // Make currentUserId reactive - updates when user changes
-    val currentUser by remember {
-        derivedStateOf { firebaseAuth.currentUser }
+    // Force recompose when isAuthenticated changes
+    val currentUserId = if (isAuthenticated) {
+        firebaseAuth.currentUser?.uid ?: ""
+    } else {
+        ""
     }
-    val currentUserId = currentUser?.uid ?: ""
 
     val noteRepository = remember(currentUserId) {
         if (currentUserId.isNotEmpty()) {
@@ -56,9 +57,16 @@ fun NoteAppNavigation() {
 
     val noteViewModel = remember(noteRepository) {
         if (noteRepository != null) {
-            NoteViewModel(noteRepository)
+            NoteViewModel(noteRepository, authRepository)
         } else {
             null
+        }
+    }
+
+    // Reset HomeScreen state when userId changes
+    LaunchedEffect(isAuthenticated) {
+        if (!isAuthenticated) {
+            // Clear local state when logging out
         }
     }
 
@@ -121,6 +129,7 @@ fun NoteAppNavigation() {
         composable(Route.Home.route) {
             if (noteViewModel != null) {
                 val noteListState by noteViewModel.noteListState.collectAsState()
+                val isAdmin by noteViewModel.isAdmin.collectAsState()
 
                 HomeScreen(
                     noteListState = noteListState,
@@ -144,13 +153,16 @@ fun NoteAppNavigation() {
                     },
                     onRefreshNotes = {
                         noteViewModel.loadNotes()
-                    }
+                    },
+                    isAdmin = isAdmin
                 )
             }
         }
 
         composable(Route.CreateNote.route) {
             if (noteViewModel != null) {
+                val isAdmin by noteViewModel.isAdmin.collectAsState()
+                
                 NoteDetailScreen(
                     noteDetailState = NoteDetailState.Loading,
                     isNewNote = true,
@@ -161,7 +173,8 @@ fun NoteAppNavigation() {
                     },
                     onBackClick = {
                         navController.popBackStack()
-                    }
+                    },
+                    isAdmin = isAdmin
                 )
             }
         }
@@ -170,6 +183,7 @@ fun NoteAppNavigation() {
             val noteId = backStackEntry.arguments?.getString("noteId") ?: ""
             if (noteViewModel != null) {
                 val noteDetailState by noteViewModel.noteDetailState.collectAsState()
+                val isAdmin by noteViewModel.isAdmin.collectAsState()
 
                 LaunchedEffect(Unit) {
                     noteViewModel.loadNoteDetail(noteId)
@@ -185,7 +199,8 @@ fun NoteAppNavigation() {
                     },
                     onBackClick = {
                         navController.popBackStack()
-                    }
+                    },
+                    isAdmin = isAdmin
                 )
             }
         }

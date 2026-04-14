@@ -9,6 +9,7 @@ data class User(
     val displayName: String = "",
     val profileImageUrl: String = "",
     val bio: String = "",
+    val role: String = "user",  // "admin" or "user"
     @ServerTimestamp
     val createdAt: Date? = null,
     @ServerTimestamp

@@ -1,7 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("org.jetbrains.kotlin.plugin.compose") // Plugin Compose xịn cho Kotlin 2.0
+    id("org.jetbrains.kotlin.plugin.compose")
     id("com.google.gms.google-services")
 }
 
@@ -32,7 +32,7 @@ android {
 }
 
 dependencies {
-    // 1. FIREBASE (Dùng BOM chuẩn mới)
+    // 1. FIREBASE
     implementation(platform("com.google.firebase:firebase-bom:33.0.0"))
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-firestore")
@@ -61,16 +61,15 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.0")
 
-    // 5. ROOM DATABASE (để lưu cache local)
+    // 5. ROOM DATABASE
     implementation("androidx.room:room-runtime:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
 
-    // 6. DATA STORE (để lưu preferences)
+    // 6. DATA STORE
     implementation("androidx.datastore:datastore-preferences:1.1.1")
 
     // 7. LOGGING
     implementation("com.jakewharton.timber:timber:5.0.1")
 
-    // DEBUG
     debugImplementation("androidx.compose.ui:ui-tooling")
 }

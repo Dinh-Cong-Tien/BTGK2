@@ -3,6 +3,7 @@ package com.tien.noteapp.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tien.noteapp.data.model.Note
+import com.tien.noteapp.data.repository.AuthRepository
 import com.tien.noteapp.data.repository.NoteRepository
 import com.tien.noteapp.ui.state.NoteDetailState
 import com.tien.noteapp.ui.state.NoteListState
@@ -11,7 +12,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class NoteViewModel(
-    private val noteRepository: NoteRepository
+    private val noteRepository: NoteRepository,
+    private val authRepository: AuthRepository
 ) : ViewModel() {
 
     private val _noteListState = MutableStateFlow<NoteListState>(NoteListState.Loading)
@@ -23,11 +25,26 @@ class NoteViewModel(
     private val _searchQuery = MutableStateFlow("")
     val searchQuery = _searchQuery.asStateFlow()
 
+    private val _isAdmin = MutableStateFlow(false)
+    val isAdmin = _isAdmin.asStateFlow()
+
     private val _selectedCategory = MutableStateFlow("All")
     val selectedCategory = _selectedCategory.asStateFlow()
 
     init {
+        loadUserRole()
         loadNotes()
+    }
+
+    fun loadUserRole() {
+        viewModelScope.launch {
+            try {
+                val role = authRepository.getUserRole()
+                _isAdmin.value = role == "admin"
+            } catch (e: Exception) {
+                _isAdmin.value = false
+            }
+        }
     }
 
     fun loadNotes() {

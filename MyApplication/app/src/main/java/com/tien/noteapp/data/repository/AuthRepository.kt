@@ -72,4 +72,13 @@ class AuthRepository(
     } catch (e: Exception) {
         Result.failure(e)
     }
+
+    suspend fun getUserRole(): String = try {
+        val userId = firebaseAuth.currentUser?.uid ?: return "user"
+        val documentSnapshot = firestore.collection("users").document(userId).get().await()
+        val user = documentSnapshot.toObject(User::class.java)
+        user?.role ?: "user"
+    } catch (e: Exception) {
+        "user"
+    }
 }

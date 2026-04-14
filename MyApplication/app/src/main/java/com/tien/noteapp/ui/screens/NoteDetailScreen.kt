@@ -37,7 +37,8 @@ fun NoteDetailScreen(
     noteDetailState: NoteDetailState,
     isNewNote: Boolean,
     onSaveNote: (Note) -> Unit,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    isAdmin: Boolean = false
 ) {
     var title by remember { mutableStateOf("") }
     var content by remember { mutableStateOf("") }
@@ -202,24 +203,36 @@ fun NoteDetailScreen(
                     )
                 }
 
-                // Save Button
-                Button(
-                    onClick = {
-                        val note = Note(
-                            title = title,
-                            content = content,
-                            imageUrl = imageUrl
-                        )
-                        onSaveNote(note)
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(48.dp),
-                    shape = RoundedCornerShape(8.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6200EE)),
-                    enabled = title.isNotEmpty() && content.isNotEmpty()
-                ) {
-                    Text("Save Note", fontSize = 16.sp, color = Color.White)
+                // Save Button - Only for admin
+                if (isAdmin) {
+                    Button(
+                        onClick = {
+                            val note = Note(
+                                title = title,
+                                content = content,
+                                imageUrl = imageUrl
+                            )
+                            onSaveNote(note)
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(48.dp),
+                        shape = RoundedCornerShape(8.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6200EE)),
+                        enabled = title.isNotEmpty() && content.isNotEmpty()
+                    ) {
+                        Text("Save Note", fontSize = 16.sp, color = Color.White)
+                    }
+                } else {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(48.dp)
+                            .background(Color(0xFFE0E0E0), RoundedCornerShape(8.dp)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text("Read-only mode", fontSize = 14.sp, color = Color(0xFF999999))
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))

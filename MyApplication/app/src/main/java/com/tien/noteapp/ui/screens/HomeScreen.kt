@@ -34,7 +34,8 @@ fun HomeScreen(
     onLogoutClick: () -> Unit,
     onSearchChange: (String) -> Unit,
     onDeleteNote: (String) -> Unit,
-    onRefreshNotes: () -> Unit = {}
+    onRefreshNotes: () -> Unit = {},
+    isAdmin: Boolean = false
 ) {
     var searchQuery by remember { mutableStateOf("") }
     var isRefreshing by remember { mutableStateOf(false) }
@@ -69,13 +70,15 @@ fun HomeScreen(
             )
         },
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = onCreateNoteClick,
-                containerColor = Color(0xFF6200EE),
-                contentColor = Color.White,
-                shape = RoundedCornerShape(16.dp)
-            ) {
-                Icon(Icons.Default.Add, contentDescription = "Add Note", modifier = Modifier.size(28.dp))
+            if (isAdmin) {
+                FloatingActionButton(
+                    onClick = onCreateNoteClick,
+                    containerColor = Color(0xFF6200EE),
+                    contentColor = Color.White,
+                    shape = RoundedCornerShape(16.dp)
+                ) {
+                    Icon(Icons.Default.Add, contentDescription = "Add Note", modifier = Modifier.size(28.dp))
+                }
             }
         }
     ) { paddingValues ->
@@ -163,7 +166,8 @@ fun HomeScreen(
                                 NoteCard(
                                     note = note,
                                     onNoteClick = { onNoteClick(note.id) },
-                                    onDeleteClick = { onDeleteNote(note.id) }
+                                    onDeleteClick = { onDeleteNote(note.id) },
+                                    isAdmin = isAdmin
                                 )
                             }
                         }
@@ -201,7 +205,8 @@ fun HomeScreen(
 fun NoteCard(
     note: Note,
     onNoteClick: () -> Unit,
-    onDeleteClick: () -> Unit
+    onDeleteClick: () -> Unit,
+    isAdmin: Boolean = false
 ) {
     var showMenu by remember { mutableStateOf(false) }
 
@@ -232,31 +237,33 @@ fun NoteCard(
                     )
                 }
 
-                // Menu Button
-                Box {
-                    IconButton(
-                        onClick = { showMenu = true },
-                        modifier = Modifier.size(32.dp)
-                    ) {
-                        Icon(
-                            Icons.Default.MoreVert,
-                            contentDescription = null,
-                            tint = Color(0xFF666666)
-                        )
-                    }
+                // Menu Button - Only show for admin
+                if (isAdmin) {
+                    Box {
+                        IconButton(
+                            onClick = { showMenu = true },
+                            modifier = Modifier.size(32.dp)
+                        ) {
+                            Icon(
+                                Icons.Default.MoreVert,
+                                contentDescription = null,
+                                tint = Color(0xFF666666)
+                            )
+                        }
 
-                    DropdownMenu(
-                        expanded = showMenu,
-                        onDismissRequest = { showMenu = false }
-                    ) {
-                        DropdownMenuItem(
-                            text = { Text("Delete") },
-                            onClick = {
-                                onDeleteClick()
-                                showMenu = false
-                            },
-                            leadingIcon = { Icon(Icons.Default.Delete, contentDescription = null) }
-                        )
+                        DropdownMenu(
+                            expanded = showMenu,
+                            onDismissRequest = { showMenu = false }
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text("Delete") },
+                                onClick = {
+                                    onDeleteClick()
+                                    showMenu = false
+                                },
+                                leadingIcon = { Icon(Icons.Default.Delete, contentDescription = null) }
+                            )
+                        }
                     }
                 }
             }

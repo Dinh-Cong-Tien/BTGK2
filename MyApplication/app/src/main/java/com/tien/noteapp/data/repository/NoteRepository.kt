@@ -12,10 +12,9 @@ class NoteRepository(
     private val currentUserId: String
 ) {
 
-    // Lấy danh sách ghi chú theo thời gian (real-time)
+    // Lấy danh sách ghi chú theo thời gian (real-time) - Tất cả notes
     fun getNotes(): Flow<List<Note>> = callbackFlow {
         val listener = firestore.collection("notes")
-            .whereEqualTo("userId", currentUserId)
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
                     close(error)
@@ -32,10 +31,9 @@ class NoteRepository(
         awaitClose { listener.remove() }
     }
 
-    // Tìm kiếm ghi chú
+    // Tìm kiếm ghi chú - Tất cả notes
     fun searchNotes(query: String): Flow<List<Note>> = callbackFlow {
         val listener = firestore.collection("notes")
-            .whereEqualTo("userId", currentUserId)
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
                     close(error)
